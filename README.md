@@ -1,4 +1,4 @@
-<h1 align="center">Housing Price guesser</h1>
+<h1 align="center">Housing Price Guesser</h1>
 
 <div align="center">
 
@@ -30,7 +30,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 
 ### Prerequisites
-All requirements are listed in the 'requirements.txt'-file, simply run the following commands:
+All requirements listed in the 'requirements.txt'-file, simply run the following commands:
 
 ```
 sudo apt-get install python3.7
@@ -46,7 +46,7 @@ Kaggle API setup: https://github.com/Kaggle/kaggle-api.
 
 Kaggle Download:
 
-Downloads and extracts all necessary data source files from the Kaggle competition and organizes it into a data_sources directory, ready to use.
+Downloads and extracts all necessary data source files from the Kaggle competition and organizes it into a input directory, ready to use.
 
 ```
 cd utils
@@ -54,29 +54,26 @@ python kaggle_download.py
 ```
 Follow any instructions given as output in case of missing files or directories.
 
-Generated files can be downloaded from (place within ./input): https://drive.google.com/file/d/1JN35qpWmMxRAXO28XfLr42ALx1w0Gcia/view?usp=sharing
-
 ### File Structure
 
 The hierarchy should look like this:
 
     .
     ├── input                         
-    │     ├── features
-    |     |    └── ...
-    │     ├── generated
-    |     |    └── ...
+    │     ├── data_description.txt
+    │     ├── sample_submission.csv
+    │     ├── test.csv
+    │     ├── train.csv
     │     └── zipped_source
     |          └── ...
     ├── models           
-    |          ├── model.hdf5
-    |          └── ...
+    |     └── model.hdf5
     ├── notebooks                              
     │     └── main.ipynb
     ├── submissions                         
     │     └── submission.csv
     ├── utils                         
-    │     ├── kaggle_downloader.py        
+    │     └──  kaggle_download.py        
     |
     ├── .gitignore
     ├── LICENSE
