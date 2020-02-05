@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# unique
+**/.ipynb_checkpoints/**
+**/input/**
+**/__pycache__/**
+**/submissions/**
+**/models/**
+**/.vscode/**
+**/zipped_source/**
+*.csv
+*.zip
+*.hdf5
