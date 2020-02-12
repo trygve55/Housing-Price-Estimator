@@ -38,8 +38,8 @@ sudo apt-get install python3-pip
 sudo apt-get install python3-venv
 git clone https://github.com/trygve55/EiT--Gruppe-1
 cd EiT--Gruppe-1
-python3 -m venv .
-source bin/activate
+python3 -m venv env
+source env/bin/activate
 python3 -m pip install -r requirements.txt
 ```
 If not already installed, set up Kaggle API:
@@ -61,21 +61,22 @@ Follow any instructions given as output in case of missing files or directories.
 The hierarchy should look like this:
 
     .
+    ├── env                              
+    │     └── ...
     ├── input                         
     │     ├── data_description.txt
     │     ├── sample_submission.csv
     │     ├── test.csv
-    │     ├── train.csv
-    │     └── zipped_source
-    |          └── ...
+    │     └── train.csv
     ├── models           
     |     └── model.hdf5 (added after run)
-    ├── notebooks                              
+    ├── notebooks  
+    │     ├── finn_data.ipynb                            
     │     └── main.ipynb
     ├── submissions                         
     │     └── submission.csv (added after run)
     ├── utils                         
-    │     └──  kaggle_download.py        
+    │     └── kaggle_download.py        
     |
     ├── .gitignore
     ├── LICENSE

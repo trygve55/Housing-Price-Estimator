@@ -27,21 +27,6 @@ def preliminary():
     stdout, stderr = proc.communicate(bytes(input_cmd, 'utf-8'))
     print(stdout)
 
-    """
-    # Directory to store the zipped original data source files
-    if (exists('zipped_source') == False):
-        mkdir('zipped_source')
-
-    # Unzip all data source files
-    data_source_files = [f for f in listdir('.') if isfile(join('.', f))]
-    for data_source_file in data_source_files:
-        zip_ref = zipfile.ZipFile(data_source_file, 'r')
-        zip_ref.extractall('.')
-        zip_ref.close()
-
-        # Move file to zipped_source
-        shutil.move(data_source_file, 'zipped_source/' + data_source_file)
-    """
     # Create models directory
     if (exists('../models') == False):
         mkdir('../models')
