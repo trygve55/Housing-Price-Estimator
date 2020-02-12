@@ -46,6 +46,9 @@ def preliminary():
     if (exists('../models') == False):
         mkdir('../models')
     
+    if (exists('../submissions') == False):
+        mkdir('../submissions')
+    
 
 if __name__ == '__main__':
     preliminary()

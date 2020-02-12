@@ -140,3 +140,11 @@ dmypy.json
 *.zip
 *.hdf5
 **/.vscode/**
+**/bin/**
+**/etc/**
+**/include/**
+**/xgboost/**
+**/lib/**
+**/lib64/**
+*.cfg
+**/share/**
