@@ -37,6 +37,8 @@ sudo apt-get install python3.7
 sudo apt-get install python3-pip
 git clone https://github.com/trygve55/EiT--Gruppe-1
 cd EiT--Gruppe-1
+python3 -m venv .
+source bin/activate
 python -m pip install -r requirements.txt
 ```
 
