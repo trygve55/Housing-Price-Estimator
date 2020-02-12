@@ -139,3 +139,4 @@ dmypy.json
 *.csv
 *.zip
 *.hdf5
+**/.vscode/**
