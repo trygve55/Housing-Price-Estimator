@@ -15,11 +15,11 @@ from subprocess import Popen, PIPE, STDOUT
 
 def preliminary():
     # Create input directory
-    if (exists('../input') == False):
-        mkdir('../input')
+    if (exists('input') == False):
+        mkdir('input')
     
     # Set directory root for download of data sources
-    chdir('../input')
+    chdir('input')
 
     # Download all data source files from Kaggle
     input_cmd = "kaggle competitions download -c house-prices-advanced-regression-techniques"
@@ -27,6 +27,7 @@ def preliminary():
     stdout, stderr = proc.communicate(bytes(input_cmd, 'utf-8'))
     print(stdout)
 
+    """
     # Directory to store the zipped original data source files
     if (exists('zipped_source') == False):
         mkdir('zipped_source')
@@ -40,7 +41,11 @@ def preliminary():
 
         # Move file to zipped_source
         shutil.move(data_source_file, 'zipped_source/' + data_source_file)
-
+    """
+    # Create models directory
+    if (exists('../models') == False):
+        mkdir('../models')
+    
 
 if __name__ == '__main__':
     preliminary()

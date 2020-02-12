@@ -49,8 +49,7 @@ Kaggle Download:
 Downloads and extracts all necessary data source files from the Kaggle competition and organizes it into a input directory, ready to use.
 
 ```
-cd utils
-python kaggle_download.py
+python utils/kaggle_download.py
 ```
 Follow any instructions given as output in case of missing files or directories.
 
@@ -67,11 +66,11 @@ The hierarchy should look like this:
     │     └── zipped_source
     |          └── ...
     ├── models           
-    |     └── model.hdf5
+    |     └── model.hdf5 (added after run)
     ├── notebooks                              
     │     └── main.ipynb
     ├── submissions                         
-    │     └── submission.csv
+    │     └── submission.csv (added after run)
     ├── utils                         
     │     └──  kaggle_download.py        
     |
