@@ -6,11 +6,9 @@ pd.set_option('display.max_columns', 500)
 
 
 def split(df):
-    print(df.head(30))
     train_df, validation_df = train_test_split(df, test_size=0.2, random_state=0)
     test_df, validation_df = train_test_split(validation_df, test_size=0.5, random_state=0)
 
-    print(train_df.head(40))
     train_df.reset_index(drop=True)
     test_df.reset_index(drop=True)
     validation_df.reset_index(drop=True)
@@ -28,8 +26,6 @@ def split(df):
     train_y.reset_index(drop=True)
     test_y.reset_index(drop=True)
     validation_y.reset_index(drop=True)
-
-    print(train_df)
 
     return train_df, train_y, validation_df, validation_y, test_df, test_y
 
