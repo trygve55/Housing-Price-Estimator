@@ -49,6 +49,7 @@ def clean_and_encode(df):
 
 def load_df(file):
     df = pd.read_csv(file)
+    df.dropna() # added
     df = clean_and_encode(df)
 
     return df
