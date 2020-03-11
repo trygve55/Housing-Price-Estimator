@@ -40,7 +40,7 @@ git clone https://github.com/trygve55/EiT--Gruppe-1
 cd EiT--Gruppe-1
 python3 -m venv env
 source env/bin/activate
-python3 -m pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 If not already installed, set up Kaggle API:
 Kaggle API setup: https://github.com/Kaggle/kaggle-api.
