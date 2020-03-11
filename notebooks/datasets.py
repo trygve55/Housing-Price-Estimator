@@ -5,7 +5,12 @@ from sklearn.model_selection import train_test_split
 pd.set_option('display.max_columns', 500)
 
 
-def split(df):
+def split(df, scaler_function=None):
+    scaler = None
+    if scaler_function:
+        scaler = scaler_function.fit(df[df.columns])
+        df[df.columns] = scaler.transform(df[df.columns])
+
     train_df, validation_df = train_test_split(df, test_size=0.2, random_state=0)
     test_df, validation_df = train_test_split(validation_df, test_size=0.5, random_state=0)
 
@@ -27,7 +32,7 @@ def split(df):
     test_y.reset_index(drop=True)
     validation_y.reset_index(drop=True)
 
-    return train_df, train_y, validation_df, validation_y, test_df, test_y
+    return train_df, train_y, validation_df, validation_y, test_df, test_y, scaler
 
 
 def clean_and_encode(df):
@@ -55,9 +60,9 @@ def load_df(file):
     return df
 
 
-def load(file):
+def load(file, scaler_function=None):
     df = load_df(file)
-    return split(df)
+    return split(df, scaler_function=scaler_function)
 
 
 if __name__ == "__main__":
