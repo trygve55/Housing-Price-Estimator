@@ -32,7 +32,7 @@ def split(df, scaler_function=None):
     test_y.reset_index(drop=True)
     validation_y.reset_index(drop=True)
 
-    return train_df, train_y, validation_df, validation_y, test_df, test_y
+    return train_df, train_y, validation_df, validation_y, test_df, test_y, scaler
 
 
 def clean_and_encode(df):
