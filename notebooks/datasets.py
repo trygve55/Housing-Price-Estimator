@@ -10,7 +10,7 @@ def split(df, scaler_function=None):
         scaler = scaler_function.fit(df[df.columns])
         df[df.columns] = scaler.transform(df[df.columns])
 
-    train_df, validation_df = train_test_split(df, test_size=0.2, random_state=0)
+    train_df, validation_df = train_test_split(df, test_size=0.3, random_state=0)
     test_df, validation_df = train_test_split(validation_df, test_size=0.5, random_state=0)
 
     train_df.reset_index(drop=True)
@@ -34,7 +34,7 @@ def split(df, scaler_function=None):
     if scaler:
         return train_df, train_y, validation_df, validation_y, test_df, test_y, scaler
 
-    return train_df, train_y, validation_df, validation_y, test_df, test_y
+    return train_df, train_y, validation_df, validation_y, test_df, test_y, scaler
 
 
 def clean_and_encode(df):
