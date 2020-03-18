@@ -43,11 +43,14 @@ def xgb_train( train_X, train_y, validation_X, validation_y):
                                  reg_lambda = 0.2, scale_pos_weight = 1, seed = None, silent = False, subsample = 1)
 
     xgb_model.fit(train_X, train_y, eval_set = [(validation_X, validation_y)], eval_metric = 'mae', 
-                  early_stopping_rounds = 32, verbose = True)   
+                  early_stopping_rounds = 32, verbose = True)
     
+    #xgb_model.load_model('../models/model_finn.hdf5')
+
     xgb_model.save_model(model_name_wrt)
     
     return xgb_model
+
 
 def feature_importances(xgb_model, train_X):
     """ prints the importances of features 
@@ -56,6 +59,8 @@ def feature_importances(xgb_model, train_X):
         train_X:       training set
     Returns:
     """
+    print('Feature importances in descending order:')
+    
     input_features = train_X.columns.values
     feat_imp = xgb_model.feature_importances_
     np.split(feat_imp, len(input_features))
@@ -67,7 +72,8 @@ def feature_importances(xgb_model, train_X):
     sorted_feats = sorted(feat_imp_dict.items(), key = operator.itemgetter(0))
     for i in range(len(sorted_feats) - 1, 0, -1):
         print(sorted_feats[i])
-
+    print()
+    
     return
 
 
@@ -79,7 +85,7 @@ def evaluate_prediction(predictions, test_y):
     Returns:
     """
     test_evaluation = predictions
-    test_evaluation['benchmark'] = test_y.median() 
+    test_evaluation['benchmark'] = test_y.mean()
     test_evaluation['target'] = test_y.reset_index(drop=True)
     test_evaluation['difference'] = test_evaluation['pred'] - test_evaluation['target']
     test_evaluation['bench difference'] = test_evaluation['benchmark'] - test_evaluation['target']
@@ -92,24 +98,24 @@ def evaluate_prediction(predictions, test_y):
     bench_mean = int(test_evaluation['abs bench difference'].mean())
     mean_perc = round(abs(test_evaluation['difference %']).mean(), 2)
     bench_mean_perc = round(abs(test_evaluation['bench difference %']).mean(), 2)
-    
-    print(f'| mean abs.  difference | our model: {mean} benchmark: {bench_mean}')
-    print(f'| mean abs % difference | our model: {mean_perc} % benchmark: {bench_mean_perc} %')
-
+    print('Model evaluation campared to mean benchmark:', test_y.median())
+    print(f'| mean abs.  difference | our model: {mean}  benchmark: {bench_mean}')
+    print(f'| mean abs % difference | our model: {mean_perc} %  benchmark: {bench_mean_perc} %')
+    print()
     
     return
 
 
 if __name__ == "__main__":
     time = datetime.now(pytz.timezone('Europe/Oslo')).strftime('%m.%d.%Y_%H.%M.%S')
-    print(f'Notebook initialized execution at {time}.')
+    print(f'Training initialized execution at {time}.')
 
     start_time = datetime.now()
 
-    train_X, train_y, validation_X, validation_y, test_X, test_y = datasets.load(f'../input/oslo20000_0403.csv')
+    train_X, train_y, validation_X, validation_y, test_X, test_y = datasets.load(f'../input/hele_norge.csv')
 
     xgb_model = xgb_train(train_X, train_y, validation_X, validation_y) 
-
+    
     feature_importances(xgb_model, train_X)
 
     predictions = pd.DataFrame()
