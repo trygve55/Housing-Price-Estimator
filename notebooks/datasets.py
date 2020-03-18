@@ -18,7 +18,7 @@ def split(df, scaler_function=None):
     test_df.reset_index(drop=True)
     validation_df.reset_index(drop=True)
 
-    target = 'Totalpris'
+    target = 'totalpris'
 
     train_y = train_df[target]
     validation_y = validation_df[target]
@@ -38,12 +38,12 @@ def split(df, scaler_function=None):
 def clean_and_encode(df):
     df = df.fillna(value=0)
 
-    fucked_cols = ['url', 'Kommunale avg.', 'Energimerking', 'Tomt', 'Utleiedel', 'Postadresse', 'Omkostninger',
-                   'Omkostninger_uten_dokumentavgift']
+    fucked_cols = ['url', 'kommunale_avg.', 'energimerking', 'tomt', 'utleiedel', 'postadresse', 'omkostninger',
+                   'omkostninger_uten_dokumentavgift']
     fucked_cols = [col for col in fucked_cols if col in df.columns]
     df = df.drop(fucked_cols, axis=1)
 
-    cat_col = ['Boligtype', 'Eieform']
+    cat_col = ['boligtype', 'eieform']
 
     for col in cat_col:
         df_dummies = pd.get_dummies(df[col], prefix=col)
