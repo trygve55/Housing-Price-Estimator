@@ -37,7 +37,7 @@ def split(df, scaler_function=None):
     return train_df, train_y, validation_df, validation_y, test_df, test_y, scaler
 
 
-def clean_and_encode(df):
+def clean_and_encode(df, save_clean=False):
     df = df.fillna(value=0)
 
     fucked_cols = ['url', 'kommunale_avg.', 'energimerking', 'tomt', 'utleiedel', 'postadresse', 'omkostninger',
@@ -74,14 +74,15 @@ def clean_and_encode(df):
     'garderobe', 'tg_0', 'boligtype_Leilighet', 'byggeaar', 'boligtype_Enebolig', 'eieform_Andel',]
     df = df[col_lst]"""
 
-    df.to_csv('../input/hele_norge_clean.csv', index = False)
+    if save_clean:
+        df.to_csv('../input/clean.csv', index=False)
     return df
 
 
 def load_df(file):
     df = pd.read_csv(file)
     df.dropna() # added
-    df = clean_and_encode(df)
+    df = clean_and_encode(df, save_clean=True)
 
     return df
 

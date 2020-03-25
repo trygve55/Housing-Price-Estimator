@@ -20,8 +20,6 @@ if __name__ == '__main__':
         if np.issubdtype(df[col].dtype, np.number):
             new_df[col].fillna((df[col].mean()), inplace=True)
 
-
-
     new_df.to_csv(r'dataset_header.csv', index=False)
 
     print('Saved to file "dataset_header.csv"')

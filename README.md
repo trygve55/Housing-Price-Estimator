@@ -44,7 +44,6 @@ python -m pip install -r requirements.txt
 
 git clone https://github.com/trygve55/pyfinn
 python -m pip install -r pyfinn/requirements.txt
-
 ```
 If not already installed, set up Kaggle API:
 Kaggle API setup: https://github.com/Kaggle/kaggle-api.
