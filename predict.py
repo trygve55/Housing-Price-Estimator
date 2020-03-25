@@ -2,6 +2,7 @@ from pyfinn import finn, eiendomspriser, neighborhood, geocode
 import sys
 import pandas as pd
 import numpy as np
+import xgboost as xgb
 from os import path
 from notebooks.datasets import clean_and_encode
 
@@ -48,6 +49,20 @@ def fetch_and_prepare(finn_code, header_df):
 
     return df.tail(1)
 
+def XGB_predictor(df):
+    xgb_model = xgb.XGBRegressor(base_score = 0.5, booster = 'gbtree', colsample_bylevel = 1,
+                                 colsample_bytree = 1, gamma = 0, importance_type = 'gain',
+                                 learning_rate = 0.1, max_delta_step = 0, max_depth = 9,
+                                 min_child_weight = 1, missing = None, n_estimators = 10000, n_jobs = -1,
+                                 nthread = None, objective = 'reg:squarederror', random_state = 101, reg_alpha = 2,
+                                 reg_lambda = 0.2, scale_pos_weight = 1, seed = None, silent = False, subsample = 1)
+    
+    xgb_model.load_model('models/model_finn.hdf5')
+    
+    test_X = df.to_numpy()
+    prediction = xgb_model.predict(test_X)
+    return prediction[0]
+
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -65,5 +80,8 @@ if __name__ == '__main__':
     finn_code = sys.argv[1]
     df = fetch_and_prepare(finn_code, old_df)
 
-    print(df)
-    print(df.shape)
+    predicted_price = XGB_predictor(df)
+    print('The predicted price for the given ad is :', int(predicted_price), 'kr.')
+
+    #print(df)
+    #print(df.shape)
