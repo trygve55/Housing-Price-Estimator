@@ -3,6 +3,8 @@ import sys
 import pandas as pd
 import numpy as np
 import xgboost as xgb
+import tensorflow
+import talos
 from os import path
 from notebooks.datasets import clean_and_encode
 
@@ -63,6 +65,19 @@ def XGB_predictor(df):
     prediction = xgb_model.predict(test_X)
     return prediction[0]
 
+def neural_predictor(test_x, experiment_name=None):
+    #Example call: predict(test_x, 'talos_models/03_25_2020_13_21_00.zip')
+    
+    #Fetches most recent model deployment:
+    if experiment_name == None:
+        list_of_files = glob.glob('talos_models/*') 
+        experiment_name = max(list_of_files, key=os.path.getctime)
+
+    restore_model = Restore(experiment_name+'.zip')
+    results = restore_model.model.predict(test_x)
+    
+    return np.array([inverse_transform(scaler,result) for result in results])
+
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -80,8 +95,9 @@ if __name__ == '__main__':
     finn_code = sys.argv[1]
     df = fetch_and_prepare(finn_code, old_df)
 
-    predicted_price = XGB_predictor(df)
-    print('The predicted price for the given ad is :', int(predicted_price), 'kr.')
+    predicted_price_XGB = XGB_predictor(df)
+    predicted_price_neural = neural_predictor(df)
+    print('The predicted price for the given ad is :\n XGB_prediction: ', int(predicted_price_XGB), 'kr.\n neural_prediction: ', int(predicted_price_neural), 'kr.')
 
     #print(df)
     #print(df.shape)
