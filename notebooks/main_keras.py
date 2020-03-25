@@ -25,6 +25,7 @@ from talos.model import early_stopper
 from talos.utils.best_model import activate_model
 from talos import Evaluate
 from talos import Deploy
+from talos import Restore
 from talos.utils.recover_best_model import recover_best_model
 
 import datasets
@@ -74,7 +75,7 @@ def talos_model(x_train, y_train, x_val, y_val, parameters):
             batch_size=parameters['batch_size'],epochs=parameters['epochs'],
             verbose=0,validation_data=[x_val, y_val],
             callbacks=[early_stopper(epochs=parameters['epochs'], 
-            mode='moderate',monitor='val_loss', patience=25)])
+            mode='moderate',monitor='val_loss', patience=1)])
     
     return history, model
     
@@ -90,28 +91,23 @@ def evaluate(scan_model, test_x, test_y):
 
 
 def predict(test_x, experiment_name=None):
-    
+    #Example call: predict(test_x, 'talos_models/03_25_2020_13_21_00.zip')
     if experiment_name == None:
-        list_of_files = glob.glob('talos_log/') # * means all if need specific format then *.csv
+        list_of_files = glob.glob('talos_models/*') # * means all if need specific format then *.csv
         experiment_name = max(list_of_files, key=os.path.getctime)
 
-    results, models = recover_best_model(x_train=x_train,
-                                     y_train=y_train,
-                                     x_val=x_val,
-                                     y_val=y_val,
-                                     experiment_log=experiment_name,
-                                     input_model=iris_model,
-                                     n_models=5,
-                                     task='multi_label')
-    return models[0].predict(train_x)
+    restore_model = Restore(experiment_name+'.zip')
+    results = restore_model.model.predict(test_x)
+    
+    return np.array([inverse_transform(scaler,result) for result in results])
 
 
 if __name__ == "__main__":
 
     
-
-    # start_time = datetime.now()
-    # experiment_name = start_time.strftime("%m_%d_%Y_%H_%M_%S")
+    base_dir = os.getcwd()
+    start_time = datetime.now()
+    experiment_name = start_time.strftime("%m_%d_%Y_%H_%M_%S")
 
 
     
@@ -119,36 +115,42 @@ if __name__ == "__main__":
 
     train_x, train_y, validation_x, validation_y, test_x, test_y, scaler = datasets.load(f'../input/hele_norge.csv', scaler)
     
-    # round_lim = 1
+    round_lim = 1
     
     
-    # parameters = {'activation_1':['relu', 'elu'],
-     # 'activation_2':['relu', 'elu'],
-     # 'activation_3':['relu', 'elu'],
-     # 'optimizer': ['Adam', "RMSprop"],
-     # 'loss-functions': ['mse'],
-     # 'neurons_HL1': [50, 100, 200, 400],
-     # 'neurons_HL2': [40, 80, 160, 320],
-     # 'neurons_HL3': [40, 80, 160, 320, None],
-     # 'dropout1': [0.1, 0.2, 0.3],
-     # 'dropout2': [0.1, 0.2, 0.3],
-     # 'batch_size': [100, 250, 500],
-     # 'epochs': [400, 900]}
+    parameters = {'activation_1':['relu', 'elu'],
+     'activation_2':['relu', 'elu'],
+     'activation_3':['relu', 'elu'],
+     'optimizer': ['Adam', "RMSprop"],
+     'loss-functions': ['mse'],
+     'neurons_HL1': [50, 100, 200, 400],
+     'neurons_HL2': [40, 80, 160, 320],
+     'neurons_HL3': [40, 80, 160, 320, None],
+     'dropout1': [0.1, 0.2, 0.3],
+     'dropout2': [0.1, 0.2, 0.3],
+     'batch_size': [100, 250, 500],
+     'epochs': [400, 900]
+    }
      
-    # print('Training {round_lim} models..')   
-    # scan_model = talos.Scan(x=np.array(train_x),
-               # y=np.array(train_y),
-               # x_val=np.array(validation_x),
-               # y_val=np.array(validation_y),
-               # model=talos_model,
-               # params=parameters,
-               # experiment_name="talos_log",
-               # round_limit=round_lim)
+    print(f'training {round_lim} models..')   
+    scan_model = talos.Scan(x=np.array(train_x),
+               y=np.array(train_y),
+               x_val=np.array(validation_x),
+               y_val=np.array(validation_y),
+               model=talos_model,
+               params=parameters,
+               experiment_name="talos_log",
+               round_limit=1)
                
-    # results = evaluate(scan_model, test_x, test_y)
-    # print("Mean absolute error on test-set:")
-    # print(results)
-    predict(test_x)
+    results = evaluate(scan_model, test_x, test_y)
+    print("mean absolute error on test-set:")
+    print(results)
+    
+    os.chdir(os.path.join(base_dir, 'talos_models'))
+    Deploy(scan_model,experiment_name, metric='val_mae')
+    os.chdir(base_dir)
+    
+   
     
     
      
