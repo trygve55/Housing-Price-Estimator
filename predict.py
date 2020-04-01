@@ -2,6 +2,9 @@ from pyfinn import finn, eiendomspriser, neighborhood, geocode
 import sys
 import pandas as pd
 import numpy as np
+import xgboost as xgb
+import tensorflow
+import talos
 from os import path
 from notebooks.datasets import clean_and_encode
 
@@ -48,6 +51,33 @@ def fetch_and_prepare(finn_code, header_df):
 
     return df.tail(1)
 
+def XGB_predictor(df):
+    xgb_model = xgb.XGBRegressor(base_score = 0.5, booster = 'gbtree', colsample_bylevel = 1,
+                                 colsample_bytree = 1, gamma = 0, importance_type = 'gain',
+                                 learning_rate = 0.1, max_delta_step = 0, max_depth = 9,
+                                 min_child_weight = 1, missing = None, n_estimators = 10000, n_jobs = -1,
+                                 nthread = None, objective = 'reg:squarederror', random_state = 101, reg_alpha = 2,
+                                 reg_lambda = 0.2, scale_pos_weight = 1, seed = None, silent = False, subsample = 1)
+    
+    xgb_model.load_model('models/model_finn.hdf5')
+    
+    test_X = df.to_numpy()
+    prediction = xgb_model.predict(test_X)
+    return prediction[0]
+
+def neural_predictor(test_x, experiment_name=None):
+    #Example call: predict(test_x, 'talos_models/03_25_2020_13_21_00.zip')
+    
+    #Fetches most recent model deployment:
+    if experiment_name == None:
+        list_of_files = glob.glob('talos_models/*') 
+        experiment_name = max(list_of_files, key=os.path.getctime)
+
+    restore_model = Restore(experiment_name+'.zip')
+    results = restore_model.model.predict(test_x)
+    
+    return np.array([inverse_transform(scaler,result) for result in results])
+
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -65,5 +95,9 @@ if __name__ == '__main__':
     finn_code = sys.argv[1]
     df = fetch_and_prepare(finn_code, old_df)
 
-    print(df)
-    print(df.shape)
+    predicted_price_XGB = XGB_predictor(df)
+    predicted_price_neural = neural_predictor(df)
+    print('The predicted price for the given ad is :\n XGB_prediction: ', int(predicted_price_XGB), 'kr.\n neural_prediction: ', int(predicted_price_neural), 'kr.')
+
+    #print(df)
+    #print(df.shape)
