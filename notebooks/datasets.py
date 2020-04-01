@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 
 def split(df, scaler_function=None):
     scaler = None
-    make_plots(df)
+
     if scaler_function:
         scaler = scaler_function.fit(df[df.columns])
         df[df.columns] = scaler.transform(df[df.columns])
@@ -34,7 +34,7 @@ def split(df, scaler_function=None):
     if scaler:
         return train_df, train_y, validation_df, validation_y, test_df, test_y, scaler
 
-    return train_df, train_y, validation_df, validation_y, test_df, test_y, scaler
+    return train_df, train_y, validation_df, validation_y, test_df, test_y
 
 
 def clean_and_encode(df, save_clean=False):
@@ -55,13 +55,12 @@ def clean_and_encode(df, save_clean=False):
     len_unclean = len(df.index)
     df = df[ (df['totalpris'] >= 500_000) & (df['totalpris'] <= 25_000_000) ]
     df = df[ (df['soverom'] >= 0) & (df['soverom'] <= 10) ]
-    df = df[ (df['primaerrom'] >= 0) & (df['primaerrom'] <= 1000) ]
     df = df[ (df['bruksareal'] >= 0) & (df['bruksareal'] <= 1000) ]
     df = df[ (df['rom'] >= 0) & (df['rom'] <= 100) ]
     df = df[ (df['felleskost/mnd.'] >= 0) & (df['felleskost/mnd.'] <= 1_000_000) ]
-    df = df[ (df['etasje'] >= -10) & (df['etasje'] <= 10) ]
-    df = df[ (df['fellesgjeld'] >= 0) & (df['fellesgjeld'] <= 1_000_000) ]
-    df = df[ (df['fellesformue'] >= 0) & (df['fellesformue'] <= 1_000_000) ]
+    df = df[ (df['etasje'] >= -2) & (df['etasje'] <= 50) ]
+    df = df[ (df['fellesgjeld'] >= 0) & (df['fellesgjeld'] <= 8_000_000) ]
+    df = df[ (df['fellesformue'] >= 0) & (df['fellesformue'] <= 3_000_000) ]
     df = df[ (df['lat'] >= 50) & (df['lat'] <= 72) ]
     df = df[ (df['lon'] >= 0) & (df['lon'] <= 32) ]
     print(f'cleaning removed {round(100*(len_unclean - len(df.index))/(len_unclean), 2)} % of the original values')
@@ -75,7 +74,7 @@ def clean_and_encode(df, save_clean=False):
     df = df[col_lst]"""
 
     if save_clean:
-        df.to_csv('../input/clean.csv', index=False)
+        df.to_csv('input/clean.csv', index=False)
     return df
 
 

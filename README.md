@@ -30,34 +30,47 @@ These instructions will get you a copy of the project up and running on your loc
 
 
 ### Prerequisites
+This program requires a working install of Python 3.7.
+
 All requirements listed in the 'requirements.txt'-file, simply run the following commands:
 
 ```
-sudo apt-get install python3.7
-sudo apt-get install python3-pip
-sudo apt-get install python3-venv
 git clone https://github.com/trygve55/EiT--Gruppe-1
 cd EiT--Gruppe-1
-python3 -m venv env
-source env/bin/activate
-python -m pip install -r requirements.txt
 
+#For Linux
+python3 -m venv env 
+source env/bin/activate
+
+#For Windows
+python -m venv env 
+source env/Scripts/activate
+
+python -m pip install -r requirements.txt
 git clone https://github.com/trygve55/pyfinn
 python -m pip install -r pyfinn/requirements.txt
 ```
-If not already installed, set up Kaggle API:
-Kaggle API setup: https://github.com/Kaggle/kaggle-api.
 
 ### Installing
 
-Kaggle Download:
-
-Downloads and extracts all necessary data source files from the Kaggle competition and organizes it into a input directory, ready to use.
+Simply run the following commands:
 
 ```
-python utils/kaggle_download.py
+git clone https://github.com/trygve55/EiT--Gruppe-1
+cd EiT--Gruppe-1
+
+#For Linux
+python3 -m venv env 
+source env/bin/activate
+
+#For Windows
+python -m venv env 
+source env/Scripts/activate
+
+python -m pip install -r requirements.txt
+git clone https://github.com/trygve55/pyfinn
+python -m pip install -r pyfinn/requirements.txt
 ```
-Follow any instructions given as output in case of missing files or directories.
 
 ### File Structure
 
@@ -88,7 +101,12 @@ The hierarchy should look like this:
 
 
 ## 🎈 Usage <a name="usage"></a>
-yess
+
+#Building dataset
+
+#Training model
+
+#Predicting
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 - [Python 3.7](https://www.python.org/) 
@@ -101,7 +119,9 @@ yess
     
     
 ## ✍️ Authors <a name = "authors"></a>
+- Trygve [@trygve55](https://github.com/trygve55)
 - Lars Sandberg [@Sandbergo](https://github.com/Sandbergo)
+
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 - Lars Sandberg [@Sandbergo](https://github.com/Sandbergo)
