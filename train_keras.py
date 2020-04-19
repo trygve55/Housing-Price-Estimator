@@ -17,6 +17,10 @@ import pandas as pd
 from notebooks import datasets
 import sys
 import warnings
+import logging
+
+tf.get_logger().setLevel(logging.ERROR)
+
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -128,7 +132,7 @@ if __name__ == "__main__":
                    experiment_name='talos_training',
                    round_limit=10)
                    
-    Deploy(t, '10features_1')
+    Deploy(t, '10features_1', metric='val_mae')
 
     #hist, mod = talolos(train_x, train_y, validation_x, validation_y, parameters)
     
