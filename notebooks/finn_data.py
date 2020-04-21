@@ -84,7 +84,8 @@ def evaluate_prediction(predictions, test_y):
         test_y:      test set labels
     Returns:
     """
-    test_evaluation = predictions
+    test_evaluation = {}
+    test_evaluation['pred'] = predictions
     test_evaluation['benchmark'] = test_y.mean()
     test_evaluation['target'] = test_y.reset_index(drop=True)
     test_evaluation['difference'] = test_evaluation['pred'] - test_evaluation['target']

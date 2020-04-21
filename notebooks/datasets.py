@@ -9,7 +9,7 @@ def split(df, scaler_function=None):
     if scaler_function:
         scaler = scaler_function.fit(df[df.columns])
         df[df.columns] = scaler.transform(df[df.columns])
-
+    
     train_df, validation_df = train_test_split(df, test_size=0.3, random_state=0)
     test_df, validation_df = train_test_split(validation_df, test_size=0.5, random_state=0)
 
@@ -44,26 +44,28 @@ def clean_and_encode(df, save_clean=False):
                    'omkostninger_uten_dokumentavgift']
     fucked_cols = [col for col in fucked_cols if col in df.columns]
     df = df.drop(fucked_cols, axis=1)
+    try: 
+        cat_col = ['boligtype', 'eieform']
 
-    cat_col = ['boligtype', 'eieform']
-
-    for col in cat_col:
-        df_dummies = pd.get_dummies(df[col], prefix=col)
-        df = pd.concat([df, df_dummies], axis=1).drop([col], axis=1)
+        for col in cat_col:
+            df_dummies = pd.get_dummies(df[col], prefix=col)
+            df = pd.concat([df, df_dummies], axis=1).drop([col], axis=1)
     
     # remove outliers
-    len_unclean = len(df.index)
-    df = df[ (df['totalpris'] >= 500_000) & (df['totalpris'] <= 25_000_000) ]
-    df = df[ (df['soverom'] >= 0) & (df['soverom'] <= 10) ]
-    df = df[ (df['bruksareal'] >= 0) & (df['bruksareal'] <= 1000) ]
-    df = df[ (df['rom'] >= 0) & (df['rom'] <= 100) ]
-    df = df[ (df['felleskost/mnd.'] >= 0) & (df['felleskost/mnd.'] <= 1_000_000) ]
-    df = df[ (df['etasje'] >= -2) & (df['etasje'] <= 50) ]
-    df = df[ (df['fellesgjeld'] >= 0) & (df['fellesgjeld'] <= 8_000_000) ]
-    df = df[ (df['fellesformue'] >= 0) & (df['fellesformue'] <= 3_000_000) ]
-    df = df[ (df['lat'] >= 50) & (df['lat'] <= 72) ]
-    df = df[ (df['lon'] >= 0) & (df['lon'] <= 32) ]
-    print(f'cleaning removed {round(100*(len_unclean - len(df.index))/(len_unclean), 2)} % of the original values')
+        len_unclean = len(df.index)
+        df = df[ (df['totalpris'] >= 500_000) & (df['totalpris'] <= 25_000_000) ]
+        df = df[ (df['soverom'] >= 0) & (df['soverom'] <= 10) ]
+        df = df[ (df['bruksareal'] >= 0) & (df['bruksareal'] <= 1000) ]
+        df = df[ (df['rom'] >= 0) & (df['rom'] <= 100) ]
+        df = df[ (df['felleskost/mnd.'] >= 0) & (df['felleskost/mnd.'] <= 1_000_000) ]
+        df = df[ (df['etasje'] >= -2) & (df['etasje'] <= 50) ]
+        df = df[ (df['fellesgjeld'] >= 0) & (df['fellesgjeld'] <= 8_000_000) ]
+        df = df[ (df['fellesformue'] >= 0) & (df['fellesformue'] <= 3_000_000) ]
+        df = df[ (df['lat'] >= 50) & (df['lat'] <= 72) ]
+        df = df[ (df['lon'] >= 0) & (df['lon'] <= 32) ]
+        print(f'cleaning removed {round(100*(len_unclean - len(df.index))/(len_unclean), 2)} % of the original values')
+    except:
+        print('unable to clean file')
     
     # to remove nabolag-values
     #df = df[df.columns.drop(list(df.filter(regex='neighborhood')))]
@@ -74,20 +76,29 @@ def clean_and_encode(df, save_clean=False):
     df = df[col_lst]"""
 
     if save_clean:
-        df.to_csv('input/clean.csv', index=False)
+        try: 
+            df.to_csv('input/clean.csv', index=False)
+        except:
+            try:
+                df.to_csv('../input/clean.csv', index=False)
+            except:
+                print('unable to save clean.csv')
     return df
 
 
-def load_df(file):
-    df = pd.read_csv(file)
+def load_df(file, columns=None):
+    if columns:
+        df = pd.read_csv(file, usecols=columns)
+    else:
+        df = pd.read_csv(file, usecols=columns)
     df.dropna() # added
     df = clean_and_encode(df, save_clean=True)
 
     return df
 
 
-def load(file, scaler_function=None):
-    df = load_df(file)
+def load(file, scaler_function=None, columns=None):
+    df = load_df(file, columns)
     return split(df, scaler_function=scaler_function)
 
 

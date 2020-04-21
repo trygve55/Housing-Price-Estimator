@@ -30,11 +30,16 @@ def neural_predictor(test_x, experiment_name=None):
     
     #Fetches most recent model deployment:
     if experiment_name == None:
-        list_of_files = glob.glob('../talos_training/*.zip') 
+        list_of_files = glob.glob('../talos_training/*.zip')
+        print(list_of_files) 
         pathname = max(list_of_files, key=os.path.getctime)
+        print('Restoring talos-model '+ pathname + '..')
+
         t = Restore(pathname)
+
     else:
         t = Restore(experiment_name)
+        print('Restoring talos-model '+ experiment_name + '..')
 
     results = t.model.predict(test_x)
     
@@ -50,7 +55,7 @@ if __name__ == "__main__":
         experiment_name = None
     
     dummy_scaler = MinMaxScaler()
-    train_x, train_y, validation_x, validation_y, test_x, test_y, dummy_scaler = load(f'input/hele_norge.csv', dummy_scaler)
+    train_x, train_y, validation_x, validation_y, test_x, test_y, dummy_scaler = load(f'../input/hele_norge.csv', dummy_scaler)
 
     #For 10-feature testing:
     features = ['boligtype_Leilighet', 'boligtype_Enebolig', 'bruksareal', 'boligtype_Tomannsbolig', 'postnummer', 'boligtype_Rekkehus', 

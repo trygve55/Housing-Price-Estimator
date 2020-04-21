@@ -38,6 +38,8 @@ import warnings
 warnings.filterwarnings('ignore')
 warnings.filterwarnings(action = 'ignore', category = FutureWarning)
 warnings.filterwarnings(action = 'ignore', category = DeprecationWarning)
+with np.testing.suppress_warnings() as sup:
+    sup.filter(DeprecationWarning, "")
 tf.get_logger().setLevel(logging.ERROR)
 import pandas as pd
 pd.set_option('display.max_rows', 500)
