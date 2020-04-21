@@ -32,6 +32,7 @@ from talos import Restore
 from talos.utils.recover_best_model import recover_best_model
 import logging
 import datasets
+from XGBoost_train import evaluate_prediction
 
 
 import warnings
@@ -80,7 +81,7 @@ def talos_model(x_train, y_train, x_val, y_val, parameters):
             batch_size=parameters['batch_size'],epochs=parameters['epochs'],
             verbose=0,validation_data=[x_val, y_val],
             callbacks=[early_stopper(epochs=parameters['epochs'], 
-            mode='moderate',monitor='val_loss', patience=1)])
+            mode='moderate',monitor='val_loss', patience=25)])
     
     return history, model
     
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     
     scaler = MinMaxScaler()
     dataset = 'hele_norge'
-    train_x, train_y, validation_x, validation_y, test_x, test_y, scaler = datasets.load(f'input/'+dataset+'.csv', scaler)
+    train_x, train_y, validation_x, validation_y, test_x, test_y, scaler = datasets.load(f'../input/'+dataset+'.csv', scaler)
     
     #Save scaler for future predictions:
     joblib.dump(scaler, f'../talos_training/'+ dataset +'.scaler') 
@@ -113,20 +114,42 @@ if __name__ == "__main__":
 
     round_lim = 10
     
-    
-    parameters = {'activation_1':['relu', 'elu'],
-     'activation_2':['relu', 'elu'],
-     'activation_3':['relu', 'elu'],
-     'optimizer': ['Adam', "RMSprop"],
-     'loss-functions': ['mse'],
-     'neurons_HL1': [50, 100, 200, 400],
-     'neurons_HL2': [40, 80, 160, 320],
-     'neurons_HL3': [40, 80, 160, 320, None],
-     'dropout1': [0.1, 0.2, 0.3],
-     'dropout2': [0.1, 0.2, 0.3],
-     'batch_size': [100, 250, 500],
-     'epochs': [400, 900]
-    }
+    if len(sys.argv) == 2:
+        print("10-feature training initialized")
+        features = ['boligtype_Leilighet', 'boligtype_Enebolig', 'bruksareal', 'boligtype_Tomannsbolig', 'postnummer', 'boligtype_Rekkehus', 
+        'neighborhood_environment_demographics_housingage_10-30', 'neighborhood_environment_demographics_housingprices_0-2000000', 'neighborhood_environment_demographics_housingage_30-50',
+        'eieform_Andel']
+        parameters = {'activation_1':['relu', 'elu'],
+        'activation_2':['relu', 'elu'],
+        'activation_3':['relu', 'elu'],
+        'optimizer': ['Adam', "RMSprop"],
+        'loss-functions': ['mse'],
+        'neurons_HL1': [5, 10, 20, 40],
+        'neurons_HL2': [5, 10, 20, 40],
+        'neurons_HL3': [5, 10, 20, 40, None],
+        'dropout1': [0.1, 0.2, 0.3],
+        'dropout2': [0.1, 0.2, 0.3],
+        'batch_size': [100, 250, 500],
+        'epochs': [400, 900]
+        }
+        train_x = train_x[features]
+        validation_x = validation_x[features]
+        test_x = test_x[features]
+    else:
+        print("All-feature training initialized")
+        parameters = {'activation_1':['relu', 'elu'],
+        'activation_2':['relu', 'elu'],
+        'activation_3':['relu', 'elu'],
+        'optimizer': ['Adam', "RMSprop"],
+        'loss-functions': ['mse'],
+        'neurons_HL1': [50, 100, 200, 400],
+        'neurons_HL2': [40, 80, 160, 320],
+        'neurons_HL3': [40, 80, 160, 320, None],
+        'dropout1': [0.1, 0.2, 0.3],
+        'dropout2': [0.1, 0.2, 0.3],
+        'batch_size': [100, 250, 500],
+        'epochs': [400, 900]
+        }
      
     print(f'training {round_lim} model(s)..')   
     scan_model = talos.Scan(x=np.array(train_x),
@@ -137,16 +160,28 @@ if __name__ == "__main__":
                params=parameters,
                experiment_name="talos_log",
                round_limit=round_lim)
-               
+
+    #Evaluation:           
     results = evaluate(scan_model, test_x, test_y)
     print("mean absolute error on test-set:")
     print(results)
+
+
     
+    #Deploy model
     os.chdir(os.path.join(base_dir, 'talos_models'))
     Deploy(scan_model,experiment_name, metric='val_mae')
     os.chdir(base_dir)
     
    
+    #Evaluate predictions on test-set:
+    best_model = scan_model.best_model('val_mae')
+    predictions = best_model.predict(test_x)
+    #Formatting:
+    predictions = pd.Series(np.ndarray.flatten(predictions))
+    prices = pd.Series(np.ndarray.flatten(inverse_transform_df(test_y)))
+
+    evaluate_prediction(predictions, prices)
     
     
      

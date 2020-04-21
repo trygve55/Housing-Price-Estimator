@@ -34,7 +34,6 @@ def neural_predictor(test_x, experiment_name=None):
         print(list_of_files) 
         pathname = max(list_of_files, key=os.path.getctime)
         print('Restoring talos-model '+ pathname + '..')
-
         t = Restore(pathname)
 
     else:
@@ -46,12 +45,11 @@ def neural_predictor(test_x, experiment_name=None):
     return inverse_transform_df(results), t.model
 
 if __name__ == "__main__":
-    # if len(sys.argv) != 4:
-    #     print('Invalid number of arguments.\n\nUsage:\n$ python neural_restore_predict test_x test_y PATH/model_name.zip')
-    #     exit(1)
+
     if len(sys.argv) == 2:
         experiment_name = sys.argv[1]
     else:
+        print('Usage: neural_restore_predict.py PATH_TO_MODEL.zip')
         experiment_name = None
     
     dummy_scaler = MinMaxScaler()
@@ -68,10 +66,8 @@ if __name__ == "__main__":
 
     predictions, model = neural_predictor(test_x, experiment_name)
 
-
     #Formatting:
     predictions = pd.Series(np.ndarray.flatten(predictions))
     prices = pd.Series(np.ndarray.flatten(inverse_transform_df(test_y)))
-
-
+    
     evaluate_prediction(predictions, prices)
