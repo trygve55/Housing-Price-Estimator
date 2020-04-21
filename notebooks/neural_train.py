@@ -90,6 +90,11 @@ def inverse_transform(scaler, value):
     mat[0, 0] = value
     return scaler.inverse_transform(mat)[:,0]
 
+def inverse_transform_df(data):
+    #Retrieve scaler:
+    scaler = joblib.load('../talos_training/hele_norge.scaler')
+    return np.array([inverse_transform(scaler,result) for result in data])
+    
 def evaluate(scan_model, test_x, test_y):
     eval_model = Evaluate(scan_model)
     results = eval_model.evaluate(np.array(test_x), np.array(test_y), task='continuous',folds=10, metric='loss')
@@ -112,7 +117,7 @@ if __name__ == "__main__":
     joblib.dump(scaler, f'../talos_training/'+ dataset +'.scaler') 
 
 
-    round_lim = 10
+    round_lim = 30
     
     if len(sys.argv) == 2:
         print("10-feature training initialized")

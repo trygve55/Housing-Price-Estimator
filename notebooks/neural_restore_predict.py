@@ -12,14 +12,17 @@ import sys
 from datasets import clean_and_encode
 from datasets import load
 from sklearn.externals import joblib
-from neural_train import inverse_transform
 from neural_train import talos_model
-from finn_data import evaluate_prediction
+from XGBoost_train import evaluate_prediction
 
 from sklearn.preprocessing import MinMaxScaler
 from talos import Evaluate
 from talos.utils.recover_best_model import recover_best_model
 
+def inverse_transform(scaler, value):
+    mat = np.zeros((1, scaler.scale_.shape[0]))
+    mat[0, 0] = value
+    return scaler.inverse_transform(mat)[:,0]
 def inverse_transform_df(data):
     #Retrieve scaler:
     scaler = joblib.load('../talos_training/hele_norge.scaler')
@@ -46,7 +49,7 @@ def neural_predictor(test_x, experiment_name=None):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) == 2:
+    if len(sys.argv) >= 2:
         experiment_name = sys.argv[1]
     else:
         print('Usage: neural_restore_predict.py PATH_TO_MODEL.zip')
@@ -55,13 +58,14 @@ if __name__ == "__main__":
     dummy_scaler = MinMaxScaler()
     train_x, train_y, validation_x, validation_y, test_x, test_y, dummy_scaler = load(f'../input/hele_norge.csv', dummy_scaler)
 
-    #For 10-feature testing:
-    features = ['boligtype_Leilighet', 'boligtype_Enebolig', 'bruksareal', 'boligtype_Tomannsbolig', 'postnummer', 'boligtype_Rekkehus', 
-    'neighborhood_environment_demographics_housingage_10-30', 'neighborhood_environment_demographics_housingprices_0-2000000', 'neighborhood_environment_demographics_housingage_30-50',
-    'eieform_Andel']
-    train_x = train_x[features]
-    validation_x = validation_x[features]
-    test_x = test_x[features]
+    if len(sys.argv) >= 3:
+        #For 10-feature testing:
+        features = ['boligtype_Leilighet', 'boligtype_Enebolig', 'bruksareal', 'boligtype_Tomannsbolig', 'postnummer', 'boligtype_Rekkehus', 
+        'neighborhood_environment_demographics_housingage_10-30', 'neighborhood_environment_demographics_housingprices_0-2000000', 'neighborhood_environment_demographics_housingage_30-50',
+        'eieform_Andel']
+        train_x = train_x[features]
+        validation_x = validation_x[features]
+        test_x = test_x[features]
 
 
     predictions, model = neural_predictor(test_x, experiment_name)

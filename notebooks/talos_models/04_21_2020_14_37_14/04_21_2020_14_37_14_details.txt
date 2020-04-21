@@ -1,0 +1,11 @@
+,0
+experiment_name,talos_log
+random_method,uniform_mersenne
+reduction_method,
+reduction_interval,50
+reduction_window,20
+reduction_threshold,0.2
+reduction_metric,val_acc
+complete_time,04/21/20/15:13
+x_shape,"(10688, 107)"
+y_shape,"(10688,)"
