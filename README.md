@@ -1,4 +1,4 @@
-<h1 align="center">Housing Price Guesser</h1>
+<h1 align="center">Housing Price Estimator</h1>
 
 <div align="center">
 
