@@ -10,20 +10,10 @@
 ---
 
 <p align="center">
-Heyhey
+Housing price estimator for the Norwegian housing market with eXtreme Gradient Boosting and Neural Networks.
 </p>
 <br> 
 
-## 📝 Table of Contents
-- [About](#about)
-- [Getting Started](#getting_started)
-- [Usage](#usage)
-- [Built Using](#built_using)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
-
-## 🧐 About <a name = "about"></a>
-yess
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
@@ -119,9 +109,10 @@ The hierarchy should look like this:
     
     
 ## ✍️ Authors <a name = "authors"></a>
-- Trygve [@trygve55](https://github.com/trygve55)
+- Adrian Falla [@Adrianfalla](https://github.com/Adrianfalla)
+- Bendik Bogfjellmo [@bendikbo](https://github.com/bendikbo)
+- Hans Julian Halvorsen [@hansi77](https://github.com/hansi77)
+- Jonas Hjulstad [@jonasbhjulstad](https://github.com/jonasbhjulstad)
 - Lars Sandberg [@Sandbergo](https://github.com/Sandbergo)
+- Trygve Nerland [@trygve55](https://github.com/trygve55)
 
-
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-- Lars Sandberg [@Sandbergo](https://github.com/Sandbergo)
